@@ -1,4 +1,4 @@
-package ru.сft.focusstart.yuyukin.MultiTable;
+package ru.сft.focusstart.yuyukin.multitable;
 
 
 public class ConsoleOutput implements Output {
@@ -27,7 +27,8 @@ public class ConsoleOutput implements Output {
     public void write(int size) {
         int countDigits = countDigits(size * size);
         String format = "%" + countDigits + "d";
-        String line = String.format("%" + countDigits + "s", "").replace(' ', '-');
+        String line = getLine(size, countDigits);
+
         for (int i = 1; i <= size; i++) {
             for (int j = 1; j <= size; j++) {
                 System.out.printf(format, i * j);
@@ -37,15 +38,24 @@ public class ConsoleOutput implements Output {
                 System.out.print("|");
             }
             System.out.println();
-            for (int j = 1; j <= size; j++) {
-                System.out.print(line);
-                if (size == j) {
-                    continue;
-                }
-                System.out.print("+");
-            }
+
+            System.out.print(line);
+
             System.out.println();
         }
 
+    }
+
+    private String getLine(int size, int countDigits) {
+        StringBuilder b = new StringBuilder();
+        String line = String.format("%" + countDigits + "s", "").replace(' ', '-');
+        for (int j = 1; j <= size; j++) {
+            b.append(line);
+            if (size == j) {
+                continue;
+            }
+            b.append("+");
+        }
+        return b.toString();
     }
 }

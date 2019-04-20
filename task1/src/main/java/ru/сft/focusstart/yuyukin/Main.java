@@ -1,10 +1,9 @@
 package ru.сft.focusstart.yuyukin;
 
 
-
-import ru.сft.focusstart.yuyukin.MultiTable.ConsoleInput;
-import ru.сft.focusstart.yuyukin.MultiTable.ConsoleOutput;
-import ru.сft.focusstart.yuyukin.MultiTable.MultiplicationTable;
+import ru.сft.focusstart.yuyukin.multitable.ConsoleInput;
+import ru.сft.focusstart.yuyukin.multitable.ConsoleOutput;
+import ru.сft.focusstart.yuyukin.multitable.MultiplicationTable;
 
 
 public class Main {
