@@ -20,7 +20,7 @@ public class MultiplicationTable {
      * <p>Выводит таблицу умножения.<p>
      */
     public void show() {
-        int sizeOfTable = 0;
+        int sizeOfTable;
         try {
             sizeOfTable = input.read();
         } catch (Exception e) {
