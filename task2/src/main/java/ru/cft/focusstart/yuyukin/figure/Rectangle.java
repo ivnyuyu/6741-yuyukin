@@ -1,13 +1,13 @@
 package ru.cft.focusstart.yuyukin.figure;
 
 public class Rectangle extends Shape {
-    private final static String name = "Прямоугольник";
+    private final static String NAME = "Прямоугольник";
     private double length;
     private double width;
 
     Rectangle(double length, double width) throws Exception {
         if (!super.isValidParam(this, length, width)) {
-            throw new Exception("Не валидные параметры для " + name);
+            throw new Exception("Не валидные параметры для " + NAME);
         }
         this.length = length;
         this.width = width;
@@ -33,7 +33,6 @@ public class Rectangle extends Shape {
                         "\nДиагональ: %.2f" +
                         "\nШирина: %.2f " +
                         "\nВысота: %.2f ",
-                name, getSquare(), getPerimeter(), getDiagonal(), width, length);
+                NAME, getSquare(), getPerimeter(), getDiagonal(), width, length);
     }
-
 }

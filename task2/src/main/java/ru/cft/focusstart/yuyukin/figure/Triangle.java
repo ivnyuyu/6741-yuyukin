@@ -2,14 +2,15 @@ package ru.cft.focusstart.yuyukin.figure;
 
 
 public class Triangle extends Shape {
-    private final static String name = "Треугольник";
+    private final static String NAME = "Треугольник";
     private double firstSide;
     private double secondSide;
     private double thirdSide;
 
+
     Triangle(double firstSide, double secondSide, double thirdSide) throws Exception {
         if (!super.isValidParam(this, firstSide, secondSide, thirdSide)) {
-            throw new Exception("Не валидные параметры для " + name);
+            throw new Exception("Не валидные параметры для " + NAME);
         }
         isValidParam(this, firstSide, secondSide, thirdSide);
         this.firstSide = firstSide;
@@ -40,7 +41,7 @@ public class Triangle extends Shape {
                         "\nСторона размером %.2f  лежит напротив угла в  %.2f градусов" +
                         "\nСторона размером %.2f  лежит напротив угла в  %.2f градусов"
 
-                , name,
+                , NAME,
                 getSquare(),
                 getPerimeter(),
                 firstSide, getAngle(firstSide, secondSide, thirdSide),
