@@ -1,16 +1,14 @@
 package ru.cft.focusstart.yuyukin.figure;
 
 public class Circle extends Shape {
-    private final static String NAME = "Круг";
     private double radius;
 
-    Circle(double radius) throws Exception {
-        if (!super.isValidParam(this, radius)) {
-            throw new Exception("Не валидные данные для " + NAME);
+    public Circle(double radius) {
+        if (!isValidParam()) {
+            throw new IllegalArgumentException("Не валидные параметры для " + getName());
         }
         this.radius = radius;
     }
-
 
     private double getSquare() {
         return Math.PI * radius * radius;
@@ -25,15 +23,22 @@ public class Circle extends Shape {
     }
 
     @Override
+    boolean isValidParam() {
+        return radius > 0;
+    }
+
+    @Override
+    public String getName() {
+        return "Круг";
+    }
+
+    @Override
     public String getInformation() {
         return String.format("Тип фигуры: %s" +
                         "\nПлощадь: %.2f" +
                         "\nПериметр: %.2f" +
                         "\nРадиус: %.2f" +
-                        "\nДиаметр: %.2f"
-                , NAME, getSquare(), getPerimeter(), radius, getDiameter());
-
+                        "\nДиаметр: %.2f",
+                getName(), getSquare(), getPerimeter(), radius, getDiameter());
     }
-
-
 }

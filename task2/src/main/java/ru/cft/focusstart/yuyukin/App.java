@@ -1,8 +1,5 @@
 package ru.cft.focusstart.yuyukin;
 
-
-import ru.cft.focusstart.yuyukin.figure.FileOutput;
-import ru.cft.focusstart.yuyukin.figure.Reader;
 import ru.cft.focusstart.yuyukin.figure.Shape;
 
 public class App {
@@ -10,7 +7,6 @@ public class App {
     private static String outputFile;
 
     public static void main(String[] args) {
-
         try {
             parseArgs(args);
             Shape shape = new Reader().getShapeFromFile(inputFile);
@@ -26,7 +22,7 @@ public class App {
 
     private static void parseArgs(String[] args) throws Exception {
         if (args.length == 0) {
-            throw new Exception("Отсутсвуют аргументы в командной строке");
+            throw new Exception("Отсутствуют аргументы в командной строке");
         }
         inputFile = args[0];
         if (args.length > 1) {

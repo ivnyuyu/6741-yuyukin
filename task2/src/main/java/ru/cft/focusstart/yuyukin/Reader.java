@@ -1,4 +1,6 @@
-package ru.cft.focusstart.yuyukin.figure;
+package ru.cft.focusstart.yuyukin;
+
+import ru.cft.focusstart.yuyukin.figure.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -7,13 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class Reader {
+class Reader {
     final private static int SIZE_CIRCLE_ARG = 1;
     final private static int SIZE_RECTANGLE_ARG = 2;
     final private static int SIZE_TRIANGLE_ARG = 3;
 
-    public Shape getShapeFromFile(String file) throws Exception {
+    Shape getShapeFromFile(String file) throws Exception {
         String nameShape;
         String paramShape;
         List<Double> params = new ArrayList<>();
@@ -26,9 +27,8 @@ public class Reader {
                     params.add(Double.parseDouble(param));
                 }
             }
-
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(file + "Файл не был найден: " + file);
+            throw new FileNotFoundException("Файл не был найден: " + file);
         } catch (IOException e) {
             throw new IOException("Не удалось считать с файла:" + file);
         } catch (NumberFormatException e) {

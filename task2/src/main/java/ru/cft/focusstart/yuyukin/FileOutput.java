@@ -1,11 +1,12 @@
-package ru.cft.focusstart.yuyukin.figure;
+package ru.cft.focusstart.yuyukin;
+
+import ru.cft.focusstart.yuyukin.figure.Shape;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class FileOutput {
-    public void write(Shape shape, String file) throws Exception {
-
+class FileOutput {
+    void write(Shape shape, String file) throws Exception {
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(shape.getInformation());
         } catch (IOException e) {
