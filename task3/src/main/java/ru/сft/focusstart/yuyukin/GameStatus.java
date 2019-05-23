@@ -1,7 +1,17 @@
 package ru.сft.focusstart.yuyukin;
 
 public enum GameStatus {
-    Running,
-    Won,
-    Lost
+    Running("/icons/running.png"),
+    Won("/icons/windeb.png"),
+    Lost("/icons/lost.png");
+
+    private String urlImage;
+
+    GameStatus(String urlImage) {
+        this.urlImage = urlImage;
+    }
+
+    public String getUrlImage() {
+        return urlImage;
+    }
 }
