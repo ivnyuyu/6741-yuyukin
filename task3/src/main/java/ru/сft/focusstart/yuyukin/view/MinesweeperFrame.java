@@ -45,8 +45,8 @@ public class MinesweeperFrame implements Observer {
         for (int i = 0; i < buttonsCell.length; i++) {
             for (int j = 0; j < buttonsCell.length; j++) {
                 buttonsCell[i][j] = new JButton();
-                Icon closedIcon = new ImageIcon(MinesweeperFrame.class.getResource(cells[i][j].typeCell.getUrlImage()));
-                buttonsCell[i][j].setIcon(closedIcon);
+                Icon icon = new ImageIcon(MinesweeperFrame.class.getResource(cells[i][j].typeCell.getUrlImage()));
+                buttonsCell[i][j].setIcon(icon);
                 buttonsCell[i][j].setPreferredSize(BUTTON_PREFERRED_SIZE);
                 Cell cell = new Cell(i, j);
                 buttonsCell[i][j].addMouseListener(new MouseListener() {
@@ -87,8 +87,8 @@ public class MinesweeperFrame implements Observer {
 
 
     private void setButtonState(int i, int j) {
-        Icon closedIcon = new ImageIcon(MinesweeperFrame.class.getResource(cells[i][j].typeCell.getUrlImage()));
-        buttonsCell[i][j].setIcon(closedIcon);
+        Icon icon = new ImageIcon(MinesweeperFrame.class.getResource(cells[i][j].typeCell.getUrlImage()));
+        buttonsCell[i][j].setIcon(icon);
     }
 
     private void setGameStatus(GameStatus gameStatus) {
