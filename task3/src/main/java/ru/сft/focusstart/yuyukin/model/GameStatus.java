@@ -1,4 +1,4 @@
-package ru.сft.focusstart.yuyukin;
+package ru.сft.focusstart.yuyukin.model;
 
 public enum GameStatus {
     Running("/icons/running.png"),

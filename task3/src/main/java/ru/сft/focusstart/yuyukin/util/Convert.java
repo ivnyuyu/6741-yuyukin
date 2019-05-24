@@ -1,8 +1,8 @@
 package ru.сft.focusstart.yuyukin.util;
 
-import ru.сft.focusstart.yuyukin.TypeCell;
+import ru.сft.focusstart.yuyukin.model.TypeCell;
 
-public class Convertor {
+public class Convert {
     public static TypeCell nameCell(int number){
         switch (number){
             case 0: return TypeCell.Zero;
@@ -16,6 +16,6 @@ public class Convertor {
             case 8: return TypeCell.Eight;
             case -1: return TypeCell.Mine;
         }
-        return null;
+        return TypeCell.Closed;
     }
 }

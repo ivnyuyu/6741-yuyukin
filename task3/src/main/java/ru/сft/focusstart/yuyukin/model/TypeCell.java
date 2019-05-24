@@ -1,4 +1,4 @@
-package ru.сft.focusstart.yuyukin;
+package ru.сft.focusstart.yuyukin.model;
 
 public enum TypeCell {
     Closed("/icons/closed.png"),
