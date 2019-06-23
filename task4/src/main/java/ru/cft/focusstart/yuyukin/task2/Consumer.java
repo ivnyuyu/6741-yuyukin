@@ -18,9 +18,10 @@ public class Consumer implements Runnable {
         boolean isOk = true;
         while (isOk) {
             try {
-                Thread.sleep(delay);
                 Resource a = storage.takeResource();
                 log.info(String.format("Потребитель %s забрал со склада %s ", Thread.currentThread().getName(), a));
+                //System.out.println(String.format("Потребитель %s забрал со склада %s ", Thread.currentThread().getName(), a));
+                Thread.sleep(delay);
             } catch (Exception e) {
                 log.error(String.format("Произошло прерывание потока %s", Thread.currentThread().getName()));
                 isOk = false;
