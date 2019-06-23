@@ -4,8 +4,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class App {
-    private static final int NUMBER_PRODUCERS = 5;
-    private static final int NUMBER_CONSUMERS = 3;
+    private static final int NUMBER_PRODUCERS = 8;
+    private static final int NUMBER_CONSUMERS = 1;
     private static final int STORAGE_CAPACITY = 5;
 
     public static void main(String[] args) {

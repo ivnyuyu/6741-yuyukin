@@ -20,8 +20,8 @@ public class Producer implements Runnable {
             try {
                 Thread.sleep(delay);
                 Resource newResource = new Resource();
-                log.info(String.format("Производитель %s поместил на склад %s ", Thread.currentThread().getName(), newResource));
                 storage.addNewResource(newResource);
+                log.info(String.format("Производитель %s поместил на склад %s ", Thread.currentThread().getName(), newResource));
             } catch (Exception e) {
                 log.error(String.format("Произошло прерывание потока %s", Thread.currentThread().getName()));
                 isOk = false;

@@ -4,7 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Storage {
-    private static BlockingQueue<Resource> storage;
+    private volatile BlockingQueue<Resource> storage;
 
 
     public Storage(int capacity) {
