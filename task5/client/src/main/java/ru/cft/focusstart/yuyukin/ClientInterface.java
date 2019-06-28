@@ -16,27 +16,27 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientInterface extends JFrame {
-    private static final Gson gson = new Gson();
-    private static final LineBorder redMessageServerBorder = new LineBorder(Color.red, 5, true);
-    LineBorder blueMessageUserBorder = new LineBorder(Color.blue, 5, true);
+    private static final Gson GSON = new Gson();
+    private static final LineBorder RED_MESSAGE_SERVER_BORDER = new LineBorder(Color.red, 5, true);
+    private static final LineBorder BLUE_MESSAGE_USER_BORDER = new LineBorder(Color.blue, 5, true);
 
     private Socket clientSocket;
     private PrintWriter writer;
     private BufferedReader reader;
-    private JButton loginInButton;
+    private JButton loginButton;
     private JLabel userNameLabel;
     private JPanel messageArea;
-    private JTextArea jTextArea;
+    private JTextArea sendMessageArea;
     private JButton sendMessage;
-    private JScrollPane scrollPane;
-    private JPanel myPanel;
+    private JScrollPane scrollPaneMessageArea;
+    private JPanel authorizationPanel;
     private JTextField nickNameField = new JTextField(15);
     private JTextField portField = new JTextField(15);
-    private JTextArea users = new JTextArea("Пока пусто:(");
+    private JTextArea usersOnline = new JTextArea("Пока пусто:(");
 
     private volatile boolean isRegister = false;
 
-    private ClientInterface() {
+    ClientInterface() {
         super("Чат");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         initGraphicalElement();
@@ -51,15 +51,20 @@ public class ClientInterface extends JFrame {
                 if (isRegister) {
                     Message message = new Message();
                     message.setType(MessageType.LOG_OUT);
-                    writer.println(gson.toJson(message));
+                    writer.println(GSON.toJson(message));
                     writer.flush();
+                    try {
+                        clientSocket.close();
+                    } catch (IOException ex) {
+                        System.out.println("Не удалось закрыть сокет "+ex.getMessage());
+                    }
                 }
             }
         });
     }
 
     private void logIn() {
-        int result = JOptionPane.showConfirmDialog(null, myPanel,
+        int result = JOptionPane.showConfirmDialog(null, authorizationPanel,
                 "Please Enter Nickname and Port", JOptionPane.OK_CANCEL_OPTION);
         if (result != JOptionPane.OK_OPTION) {
             return;
@@ -86,12 +91,12 @@ public class ClientInterface extends JFrame {
             clientSocket = new Socket("localhost", portName);
             writer = new PrintWriter(clientSocket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            writer.println(gson.toJson(message));
+            writer.println(GSON.toJson(message));
             writer.flush();
-            Message responseFromServer = gson.fromJson(reader.readLine(), Message.class);
+            Message responseFromServer = GSON.fromJson(reader.readLine(), Message.class);
             if (responseFromServer.getStatus().equals(MessageStatus.OK)) {
                 userNameLabel.setText(userName);
-                loginInButton.setText("Разлогиниться");
+                loginButton.setText("Разлогиниться");
                 isRegister = true;
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -106,20 +111,20 @@ public class ClientInterface extends JFrame {
     private void logOut() {
         isRegister = false;
         userNameLabel.setText("Вход не выполнен");
-        loginInButton.setText("Присоединиться");
+        loginButton.setText("Присоединиться");
         Message message = new Message();
         message.setType(MessageType.LOG_OUT);
-        writer.println(gson.toJson(message));
+        writer.println(GSON.toJson(message));
         writer.flush();
         try {
             clientSocket.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("Не удалось закрыть сокет "+ex.getMessage());
         }
     }
 
     private void setAuthorization() {
-        loginInButton.addActionListener(e -> {
+        loginButton.addActionListener(e -> {
             if (!isRegister) {
                 logIn();
             } else {
@@ -129,19 +134,22 @@ public class ClientInterface extends JFrame {
     }
 
     private void sendMessage() {
-        jTextArea.addFocusListener(new FocusAdapter() {
+        sendMessageArea.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                jTextArea.setText("");
+                sendMessageArea.setText("");
             }
         });
         sendMessage.addActionListener(e -> {
             if (isRegister) {
+                if (sendMessageArea.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Введите не пустое сообщение!");
+                }
                 Message message = new Message();
-                message.setData(jTextArea.getText());
-                System.out.println("Попытка отправить сообщение: " + message);
+                message.setData(sendMessageArea.getText());
                 try {
-                    writer.println(gson.toJson(message));
+                    writer.println(GSON.toJson(message));
                     writer.flush();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this,
@@ -153,36 +161,36 @@ public class ClientInterface extends JFrame {
 
     private void initGraphicalElement() {
         JPanel topPanel = new JPanel();
-        loginInButton = new JButton("Присоединиться");
+        loginButton = new JButton("Присоединиться");
         userNameLabel = new JLabel("Вход не выполнен");
         topPanel.add(userNameLabel);
-        topPanel.add(loginInButton);
+        topPanel.add(loginButton);
 
         messageArea = new JPanel();
         messageArea.setLayout(new BoxLayout(messageArea, BoxLayout.Y_AXIS));
-        scrollPane = new JScrollPane(messageArea);
+        scrollPaneMessageArea = new JScrollPane(messageArea);
 
         JPanel userInActive = new JPanel();
         userInActive.setLayout(new BoxLayout(userInActive, BoxLayout.Y_AXIS));
         JScrollPane scrollPaneUserInActive = new JScrollPane(userInActive);
         userInActive.add(new JLabel("Пользователи в сети:"));
-        users.setEditable(false);
-        users.setLineWrap(true);
-        users.setWrapStyleWord(true);
-        JScrollPane scrollPaneUsers = new JScrollPane(users, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        usersOnline.setEditable(false);
+        usersOnline.setLineWrap(true);
+        usersOnline.setWrapStyleWord(true);
+        JScrollPane scrollPaneUsers = new JScrollPane(usersOnline, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         userInActive.add(scrollPaneUsers);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        jTextArea = new JTextArea("Введите сообщение");
-        jTextArea.setLineWrap(true);
-        jTextArea.setWrapStyleWord(true);
+        sendMessageArea = new JTextArea("Введите сообщение");
+        sendMessageArea.setLineWrap(true);
+        sendMessageArea.setWrapStyleWord(true);
         sendMessage = new JButton("Отправить");
-        JScrollPane jsp = new JScrollPane(jTextArea);
-        jsp.setPreferredSize(new Dimension(800, 100));
-        bottomPanel.add(jsp, BorderLayout.CENTER);
+        JScrollPane scrollPaneSendMessageArea = new JScrollPane(sendMessageArea);
+        scrollPaneSendMessageArea.setPreferredSize(new Dimension(800, 100));
+        bottomPanel.add(scrollPaneSendMessageArea, BorderLayout.CENTER);
         bottomPanel.add(sendMessage, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        add(scrollPaneMessageArea, BorderLayout.CENTER);
         add(scrollPaneUserInActive, BorderLayout.EAST);
         add(bottomPanel, BorderLayout.SOUTH);
         setSize(1000, 1000);
@@ -190,12 +198,12 @@ public class ClientInterface extends JFrame {
         nickNameField = new JTextField(15);
         portField = new JTextField(15);
 
-        myPanel = new JPanel();
-        myPanel.add(new JLabel("Ник:"));
-        myPanel.add(nickNameField);
-        myPanel.add(Box.createHorizontalStrut(15));
-        myPanel.add(new JLabel("Порт"));
-        myPanel.add(portField);
+        authorizationPanel = new JPanel();
+        authorizationPanel.add(new JLabel("Ник:"));
+        authorizationPanel.add(nickNameField);
+        authorizationPanel.add(Box.createHorizontalStrut(15));
+        authorizationPanel.add(new JLabel("Порт"));
+        authorizationPanel.add(portField);
         setResizable(false);
         setVisible(true);
     }
@@ -205,21 +213,21 @@ public class ClientInterface extends JFrame {
             while (true) {
                 if (isRegister) {
                     try {
-                        Message message = gson.fromJson(reader.readLine(), Message.class);
+                        Message message = GSON.fromJson(reader.readLine(), Message.class);
                         if (MessageType.USER_ONLINE.equals(message.getType())) {
-                            users.setText(message.getData());
+                            usersOnline.setText(message.getData());
                         } else if (MessageType.MESSAGE.equals(message.getType())) {
                             JLabel messageLabel = new JLabel(message.toString());
-                            messageLabel.setBorder(blueMessageUserBorder);
+                            messageLabel.setBorder(BLUE_MESSAGE_USER_BORDER);
                             messageArea.add(messageLabel);
                             messageArea.add(Box.createVerticalStrut(5));
-                            scrollPane.revalidate();
+                            scrollPaneMessageArea.revalidate();
                         } else if (MessageType.SERVER_MESSAGE.equals(message.getType())) {
                             JLabel messageLabel = new JLabel(message.toString());
-                            messageLabel.setBorder(redMessageServerBorder);
+                            messageLabel.setBorder(RED_MESSAGE_SERVER_BORDER);
                             messageArea.add(messageLabel);
                             messageArea.add(Box.createVerticalStrut(5));
-                            scrollPane.revalidate();
+                            scrollPaneMessageArea.revalidate();
                         }
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this,
@@ -229,9 +237,5 @@ public class ClientInterface extends JFrame {
             }
         });
         thread.start();
-    }
-
-    public static void main(String[] args) {
-        ClientInterface clientInterface = new ClientInterface();
     }
 }
