@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Users {
-    Gson gson=new Gson();
+public class HandleUser {
+    private static Gson gson=new Gson();
     private CopyOnWriteArrayList<User> users;
 
-    public Users(){
+    HandleUser(){
         this.users=new CopyOnWriteArrayList<>();
     }
 
-    public boolean isNameFree(String name){
+    boolean isNameFree(String name){
         for(User user: users){
             if(user.getName().equals(name)){
                 return false;
@@ -23,35 +23,40 @@ public class Users {
         return true;
     }
 
-    public void addNewUser(User user){
+    void addNewUser(User user){
         users.add(user);
     }
 
-    public void sendMessageForAllUsers(String message){
+    void sendMessageForAllUsers(Message message){
+        message.setTime(LocalDateTime.now().toString());
         for(User user: users){
-            user.getPrintWriter().println(message);
+            user.getPrintWriter().println(gson.toJson(message));
             user.getPrintWriter().flush();
         }
     }
 
-    public void receiveMessageForAllUsers(){
+    void receiveMessageForAllUsers(){
         for(int i=0; i<users.size();i++){
             try {
                 if(users.get(i).getBufferedReader().ready()){
                     Message message=gson.fromJson(users.get(i).getBufferedReader().readLine(), Message.class);
-                    System.out.println("Сообщение пришло на сервер");
                     if (message.getType().equals(MessageType.LOG_OUT)) {
+                        String nameAbandonedUser=users.get(i).getName();
                         deleteUser(users.get(i));
                         Message response=new Message();
                         response.setType(MessageType.SERVER_MESSAGE);
-                        response.setData(String.format("%s has left from chat", users.get(i).getName()));
-                        sendMessageForAllUsers(gson.toJson(response));
+                        response.setData(String.format("%s has left from chat", nameAbandonedUser));
+                        response.setUserName("Server");
+                        sendMessageForAllUsers(response);
+
+                        Message messageAboutUserOnline=new Message();
+                        messageAboutUserOnline.setType(MessageType.USER_ONLINE);
+                        messageAboutUserOnline.setData(users.toString());
+                        sendMessageForAllUsers(message);
                     }else {
-                        message.setTime(LocalDateTime.now().toString());
                         message.setUserName(users.get(i).getName());
                         message.setType(MessageType.MESSAGE);
-                        System.out.println(message);
-                        sendMessageForAllUsers(gson.toJson(message));
+                        sendMessageForAllUsers(message);
                     }
                 }
             } catch (IOException e) {
@@ -60,7 +65,7 @@ public class Users {
         }
     }
 
-    public void deleteUser(User user){
+    private void deleteUser(User user){
         users.remove(user);
     }
 
