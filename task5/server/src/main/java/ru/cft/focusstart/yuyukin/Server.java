@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
-public class Server {
+class Server {
     private static final Gson GSON = new Gson();
     private HandleUser handleUser;
     private ServerSocket server;

@@ -49,18 +49,22 @@ public class ClientInterface extends JFrame {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 if (isRegister) {
-                    Message message = new Message();
-                    message.setType(MessageType.LOG_OUT);
-                    writer.println(GSON.toJson(message));
-                    writer.flush();
-                    try {
-                        clientSocket.close();
-                    } catch (IOException ex) {
-                        System.out.println("Не удалось закрыть сокет "+ex.getMessage());
-                    }
+                    exitFromChat();
                 }
             }
         });
+    }
+
+    private void exitFromChat() {
+        Message message = new Message();
+        message.setType(MessageType.LOG_OUT);
+        writer.println(GSON.toJson(message));
+        writer.flush();
+        try {
+            clientSocket.close();
+        } catch (IOException ex) {
+            System.out.println("Не удалось закрыть сокет " + ex.getMessage());
+        }
     }
 
     private void logIn() {
@@ -112,15 +116,7 @@ public class ClientInterface extends JFrame {
         isRegister = false;
         userNameLabel.setText("Вход не выполнен");
         loginButton.setText("Присоединиться");
-        Message message = new Message();
-        message.setType(MessageType.LOG_OUT);
-        writer.println(GSON.toJson(message));
-        writer.flush();
-        try {
-            clientSocket.close();
-        } catch (IOException ex) {
-            System.out.println("Не удалось закрыть сокет "+ex.getMessage());
-        }
+        exitFromChat();
     }
 
     private void setAuthorization() {
@@ -145,6 +141,7 @@ public class ClientInterface extends JFrame {
                 if (sendMessageArea.getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(this,
                             "Введите не пустое сообщение!");
+                    return;
                 }
                 Message message = new Message();
                 message.setData(sendMessageArea.getText());
