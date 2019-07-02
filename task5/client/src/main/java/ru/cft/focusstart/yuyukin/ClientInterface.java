@@ -3,7 +3,6 @@ package ru.cft.focusstart.yuyukin;
 import com.google.gson.Gson;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -17,18 +16,15 @@ import java.net.Socket;
 
 public class ClientInterface extends JFrame {
     private static final Gson GSON = new Gson();
-    private static final LineBorder RED_MESSAGE_SERVER_BORDER = new LineBorder(Color.red, 5, true);
-    private static final LineBorder BLUE_MESSAGE_USER_BORDER = new LineBorder(Color.blue, 5, true);
 
     private Socket clientSocket;
     private PrintWriter writer;
     private BufferedReader reader;
     private JButton loginButton;
     private JLabel userNameLabel;
-    private JPanel messageArea;
+    private JTextArea messageArea;
     private JTextArea sendMessageArea;
     private JButton sendMessage;
-    private JScrollPane scrollPaneMessageArea;
     private JPanel authorizationPanel;
     private JTextField nickNameField = new JTextField(15);
     private JTextField portField = new JTextField(15);
@@ -63,7 +59,7 @@ public class ClientInterface extends JFrame {
         try {
             clientSocket.close();
         } catch (IOException ex) {
-            System.out.println("Не удалось закрыть сокет " + ex.getMessage());
+            System.err.println("Не удалось закрыть сокет " + ex.getMessage());
         }
     }
 
@@ -163,9 +159,12 @@ public class ClientInterface extends JFrame {
         topPanel.add(userNameLabel);
         topPanel.add(loginButton);
 
-        messageArea = new JPanel();
+        messageArea = new JTextArea();
         messageArea.setLayout(new BoxLayout(messageArea, BoxLayout.Y_AXIS));
-        scrollPaneMessageArea = new JScrollPane(messageArea);
+        messageArea.setEnabled(false);
+        messageArea.setLineWrap(true);
+        messageArea.setDisabledTextColor(Color.BLUE);
+        JScrollPane scrollPaneMessageArea = new JScrollPane(messageArea);
 
         JPanel userInActive = new JPanel();
         userInActive.setLayout(new BoxLayout(userInActive, BoxLayout.Y_AXIS));
@@ -214,17 +213,11 @@ public class ClientInterface extends JFrame {
                         if (MessageType.USER_ONLINE.equals(message.getType())) {
                             usersOnline.setText(message.getData());
                         } else if (MessageType.MESSAGE.equals(message.getType())) {
-                            JLabel messageLabel = new JLabel(message.toString());
-                            messageLabel.setBorder(BLUE_MESSAGE_USER_BORDER);
-                            messageArea.add(messageLabel);
-                            messageArea.add(Box.createVerticalStrut(5));
-                            scrollPaneMessageArea.revalidate();
+                            messageArea.append(message.toString());
+                            messageArea.append("\n");
                         } else if (MessageType.SERVER_MESSAGE.equals(message.getType())) {
-                            JLabel messageLabel = new JLabel(message.toString());
-                            messageLabel.setBorder(RED_MESSAGE_SERVER_BORDER);
-                            messageArea.add(messageLabel);
-                            messageArea.add(Box.createVerticalStrut(5));
-                            scrollPaneMessageArea.revalidate();
+                            messageArea.append(message.toString());
+                            messageArea.append("\n");
                         }
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(this,

@@ -44,33 +44,41 @@ class Server {
                     String userName = bufferedReader.readLine();
                     Message message = GSON.fromJson(userName, Message.class);
                     if (handleUser.isNameFree(message.getUserName())) {
-                        handleUser.addNewUser(new User(clientSocket, bufferedReader, printWriter, message.getUserName()));
-                        Message responseMsg = new Message();
-                        responseMsg.setStatus("OK");
-                        printWriter.println(GSON.toJson(responseMsg));
-                        printWriter.flush();
-                        Message messageAboutUserOnline = new Message();
-                        messageAboutUserOnline.setData(handleUser.toString());
-                        messageAboutUserOnline.setType(MessageType.USER_ONLINE);
-                        handleUser.sendMessageForAllUsers(messageAboutUserOnline);
-                        Message newUserMessage = new Message();
-                        newUserMessage.setType(MessageType.SERVER_MESSAGE);
-                        newUserMessage.setData(String.format("User %s joined to chat", message.getUserName()));
-                        newUserMessage.setUserName("Server");
-                        handleUser.sendMessageForAllUsers(newUserMessage);
+                        handleUser.addNewUser(new User(bufferedReader, printWriter, message.getUserName()));
+                        responseAboutAuthorization(printWriter, MessageStatus.OK);
+                        notifyAllUsersAboutActiveUser();
+                        notifyAllUsersAboutNewUser(message);
                     } else {
-                        Message responseMsg = new Message();
-                        responseMsg.setStatus(MessageStatus.ERROR);
-                        printWriter.println(GSON.toJson(responseMsg));
-                        printWriter.flush();
+                        responseAboutAuthorization(printWriter, MessageStatus.ERROR);
                     }
-
                 } catch (Exception e) {
                     System.err.println("Не удалось установить соединение с пользователем из-за: " + e.getMessage());
                 }
             }
         });
         thread.start();
+    }
+
+    private void responseAboutAuthorization(PrintWriter printWriter, String status) {
+        Message responseMsg = new Message();
+        responseMsg.setStatus(status);
+        printWriter.println(GSON.toJson(responseMsg));
+        printWriter.flush();
+    }
+
+    private void notifyAllUsersAboutActiveUser() {
+        Message messageAboutUserOnline = new Message();
+        messageAboutUserOnline.setData(handleUser.toString());
+        messageAboutUserOnline.setType(MessageType.USER_ONLINE);
+        handleUser.sendMessageForAllUsers(messageAboutUserOnline);
+    }
+
+    private void notifyAllUsersAboutNewUser(Message message) {
+        Message newUserMessage = new Message();
+        newUserMessage.setType(MessageType.SERVER_MESSAGE);
+        newUserMessage.setData(String.format("User %s joined to chat", message.getUserName()));
+        newUserMessage.setUserName("Server");
+        handleUser.sendMessageForAllUsers(newUserMessage);
     }
 
     private void receiveMessage() {

@@ -53,7 +53,7 @@ public class HandleUser {
                         Message messageAboutUserOnline = new Message();
                         messageAboutUserOnline.setType(MessageType.USER_ONLINE);
                         messageAboutUserOnline.setData(users.toString());
-                        sendMessageForAllUsers(receiveMessage);
+                        sendMessageForAllUsers(messageAboutUserOnline);
                     } else {
                         receiveMessage.setUserName(users.get(i).getName());
                         receiveMessage.setType(MessageType.MESSAGE);
@@ -61,7 +61,7 @@ public class HandleUser {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
             }
         }
     }
